@@ -1,0 +1,59 @@
+---
+- name: Install Additional Jitsi Videobridges
+  hosts: videobridges
+  gather_facts: yes
+
+  tasks:
+
+  # Core Component
+  - name: Downlad keyring
+    shell: curl https://download.jitsi.org/jitsi-key.gpg.key | sh -c 'gpg --dearmor > /usr/share/keyrings/jitsi-keyring.gpg'
+
+  - name: Add new apt source list
+    shell: echo 'deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jitsi.org stable/' | tee /etc/apt/sources.list.d/jitsi-stable.list
+
+  - name: Install jitsi-videobridge2
+    apt:
+      name: jitsi-videobridge2
+      state: present
+      update_cache: yes
+
+  - name: Modify jitsi videobridge configuration files.
+    template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      mode: 0644
+    with_items:
+      - {src: './templates/jvb-config.j2',dest: '/etc/jitsi/videobridge/config'}
+      - {src: './templates/jvb-sip-communicator.properties.j2',dest: '/etc/jitsi/videobridge/sip-communicator.properties'}
+
+  - name: Restart service jitsi-videobridge2, in all cases
+    service:
+      name: jitsi-videobridge2.service
+      state: restarted
+
+  # Monitoring Component
+  - name: Downlad keyring
+    shell: wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+
+  - name: Add new apt source list
+    shell: source /etc/lsb-release && echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+    args:
+      executable: /bin/bash
+
+  - name: Install telegraf
+    apt:
+      name: telegraf
+      state: present
+      update_cache: yes
+
+  - name: Modify telegraf configuration files.
+    template:
+      src: "./templates/telegraf.conf.j2"
+      dest: "/etc/telegraf/telegraf.conf"
+      mode: 0644
+
+  - name: Restart service telegraf, in all cases
+    service:
+      name: telegraf.service
+      state: restarted

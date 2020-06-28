@@ -1,0 +1,16 @@
+videobridges:
+  hosts:
+    10.100.10.1:
+      jvb_muc_nickname: jvb-001
+    10.100.10.2:
+      jvb_muc_nickname: jvb-002
+  vars:
+    ansible_port: "{{ vm_port }}"
+    ansible_user: "{{ vm_user }}"
+    ansible_password: "{{ vm_password }}"
+    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+    jvb_hostname: "{{ jvb_hostname }}"
+    jvb_host: "{{ jvb_host }}"
+    jvb_secret: "{{ jvb_secret }}"
+    monitoring_username: "{{ monitoring_username }}"
+    monitoring_password: "{{ monitoring_password }}"

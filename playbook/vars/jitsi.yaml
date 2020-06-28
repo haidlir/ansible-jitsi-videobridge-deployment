@@ -1,0 +1,13 @@
+# VM Cridential
+vm_port: 22 # ssh port
+vm_user: <username> # vm username
+vm_password: <password> # vm password
+
+# JVB Configuration
+jvb_hostname: <prosody hostname> # vidcon.haidlir.id
+jvb_host:  <ip address or domain name of prosody> # example 10.130.132.203
+jvb_secret: <secret>
+
+# Monitoring Pipeline Cridential
+monitoring_username: <username> # db username
+monitoring_password: <password> # db password
